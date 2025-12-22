@@ -1,0 +1,38 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build output
+dist/
+build/
+
+# Expo
+**/.expo/
+web-build/
+expo-env.d.ts
+
+# SQLite (backend)
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqbpro
+
+# Hardhat
+contracts/cache/
+contracts/artifacts/
+contracts/typechain-types/
