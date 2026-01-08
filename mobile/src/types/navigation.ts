@@ -14,6 +14,8 @@ export type Consent = {
   partnerConfirmed?: boolean;
   blockchainId?: string | null;
   txHash?: string | null;
+  createdAt?: string | null;
+  confirmedAt?: string | null;
 };
 
 export type AuthStackParamList = {

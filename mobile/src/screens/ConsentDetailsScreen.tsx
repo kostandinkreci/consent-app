@@ -152,6 +152,11 @@ const ConsentDetailsScreen = ({ route }: Props) => {
       <Text style={styles.label}>Partner</Text>
       <Text style={styles.value}>{consent.partnerEmail ?? 'Awaiting partner'}</Text>
 
+      <Text style={styles.label}>Created</Text>
+      <Text style={styles.value}>{formatTimestamp(consent.createdAt, 'Unknown')}</Text>
+      <Text style={styles.label}>Confirmed</Text>
+      <Text style={styles.value}>{formatTimestamp(consent.confirmedAt, 'Not yet')}</Text>
+
       {consent.description ? (
         <>
           <Text style={styles.label}>Details</Text>
@@ -196,6 +201,12 @@ const statusColor = (status: Consent['status']) => {
     default:
       return { color: colors.warning };
   }
+};
+
+const formatTimestamp = (value: string | null | undefined, fallback: string) => {
+  if (!value) return fallback;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
 };
 
 const styles = StyleSheet.create({

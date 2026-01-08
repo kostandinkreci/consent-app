@@ -16,11 +16,13 @@ export type ConsentRecord = {
   joinCode: string | null;
   initiatorConfirmed: number;
   partnerConfirmed: number;
+  createdAt: string | null;
+  confirmedAt: string | null;
 };
 
 const insertConsentStmt = db.prepare(
-  `INSERT INTO CONSENTS (id, initiatorId, partnerId, title, description, validFrom, validTo, status, blockchainId, txHash, joinCode, initiatorConfirmed, partnerConfirmed)
-   VALUES (@id, @initiatorId, @partnerId, @title, @description, @validFrom, @validTo, @status, @blockchainId, @txHash, @joinCode, @initiatorConfirmed, @partnerConfirmed)`
+  `INSERT INTO CONSENTS (id, initiatorId, partnerId, title, description, validFrom, validTo, status, blockchainId, txHash, joinCode, initiatorConfirmed, partnerConfirmed, createdAt, confirmedAt)
+   VALUES (@id, @initiatorId, @partnerId, @title, @description, @validFrom, @validTo, @status, @blockchainId, @txHash, @joinCode, @initiatorConfirmed, @partnerConfirmed, @createdAt, @confirmedAt)`
 );
 
 const getConsentStmt = db.prepare<ConsentRecord>('SELECT * FROM CONSENTS WHERE id = ?');

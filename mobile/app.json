@@ -13,7 +13,10 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "We use Face ID to confirm consent actions."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +27,7 @@
       "predictiveBackGestureEnabled": false
     },
     "extra": {
-      "apiBaseUrl": "http://192.168.1.105:4000"
+      "apiBaseUrl": "http://192.168.0.100:4000"
     },
     "web": {
       "favicon": "./assets/favicon.png"

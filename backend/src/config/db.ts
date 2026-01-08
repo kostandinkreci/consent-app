@@ -29,6 +29,8 @@ const createTables = () => {
       joinCode TEXT,
       initiatorConfirmed INTEGER DEFAULT 0,
       partnerConfirmed INTEGER DEFAULT 0,
+      createdAt TEXT,
+      confirmedAt TEXT,
       FOREIGN KEY (initiatorId) REFERENCES USERS(id),
       FOREIGN KEY (partnerId) REFERENCES USERS(id)
     )
@@ -36,5 +38,23 @@ const createTables = () => {
 };
 
 createTables();
+
+const ensureConsentColumns = () => {
+  const columns = db
+    .prepare(`PRAGMA table_info('CONSENTS')`)
+    .all()
+    .map((column: { name: string }) => column.name);
+  const columnSet = new Set(columns);
+
+  if (!columnSet.has('createdAt')) {
+    db.prepare('ALTER TABLE CONSENTS ADD COLUMN createdAt TEXT').run();
+  }
+
+  if (!columnSet.has('confirmedAt')) {
+    db.prepare('ALTER TABLE CONSENTS ADD COLUMN confirmedAt TEXT').run();
+  }
+};
+
+ensureConsentColumns();
 
 export default db;

@@ -76,6 +76,7 @@ const MyConsentsScreen = ({ navigation }: Props) => {
     >
       <Text style={styles.consentTitle}>{item.title}</Text>
       <Text style={styles.consentPartner}>{counterpartyLabel(item)}</Text>
+      <Text style={styles.consentTimestamp}>Created: {formatTimestamp(item.createdAt, 'Unknown')}</Text>
       <Text style={[styles.consentStatus, statusColor(item.status)]}>{item.status}</Text>
     </TouchableOpacity>
   );
@@ -118,6 +119,12 @@ const statusColor = (status: Consent['status']) => {
   }
 };
 
+const formatTimestamp = (value: string | null | undefined, fallback: string) => {
+  if (!value) return fallback;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -151,6 +158,10 @@ const styles = StyleSheet.create({
   consentPartner: {
     color: colors.textMuted,
     marginVertical: spacing.xs,
+  },
+  consentTimestamp: {
+    color: colors.textMuted,
+    marginBottom: spacing.xs,
   },
   consentStatus: {
     fontWeight: '700',

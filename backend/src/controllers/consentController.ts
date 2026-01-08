@@ -44,6 +44,8 @@ const serializeConsent = (consent: ConsentRecord & { initiatorEmail?: string; pa
   partnerConfirmed: Boolean(consent.partnerConfirmed),
   initiatorEmail: consent.initiatorEmail,
   partnerEmail: consent.partnerEmail,
+  createdAt: consent.createdAt,
+  confirmedAt: consent.confirmedAt,
 });
 
 export const createConsentSession = async (req: Request, res: Response) => {
@@ -80,6 +82,8 @@ export const createConsentSession = async (req: Request, res: Response) => {
     joinCode: partner ? null : joinCode,
     initiatorConfirmed: 0,
     partnerConfirmed: 0,
+    createdAt: new Date().toISOString(),
+    confirmedAt: null,
   };
 
   const created = createConsent(consent);
@@ -156,6 +160,7 @@ export const confirmConsent = async (req: Request, res: Response) => {
         status: 'ACTIVE',
         blockchainId: updated.id,
         txHash: tx.hash,
+        confirmedAt: new Date().toISOString(),
       });
     } catch (error) {
       console.error('On-chain consent failed', error);
