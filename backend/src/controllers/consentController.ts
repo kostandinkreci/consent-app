@@ -5,6 +5,7 @@ import {
   ConsentRecord,
   ConsentStatus,
   createConsent,
+  deleteConsent as deleteConsentRecord,
   getConsentById,
   getConsentByJoinCode,
   listConsentsForUser,
@@ -224,4 +225,24 @@ export const getConsent = (req: Request, res: Response) => {
   }
 
   return res.json(serializeConsent(consent));
+};
+
+export const deleteConsent = (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+  const { id } = req.params;
+  const consent = getConsentById(id);
+  if (!consent) return res.status(404).json({ message: 'Consent not found' });
+
+  if (consent.initiatorId !== userId && consent.partnerId !== userId) {
+    return res.status(403).json({ message: 'Not part of this consent' });
+  }
+
+  if (consent.status === 'ACTIVE') {
+    return res.status(400).json({ message: 'Active consents must be revoked before deletion' });
+  }
+
+  deleteConsentRecord(id);
+  return res.json({ success: true });
 };

@@ -3,6 +3,7 @@ import { Router } from 'express';
 import {
   confirmConsent,
   createConsentSession,
+  deleteConsent,
   getConsent,
   joinConsentSession,
   listConsents,
@@ -16,6 +17,7 @@ router.use(authMiddleware);
 
 router.get('/', listConsents);
 router.get('/:id', getConsent);
+router.delete('/:id', deleteConsent);
 router.post('/create', createConsentSession);
 router.post('/join', joinConsentSession);
 router.post('/confirm', confirmConsent);

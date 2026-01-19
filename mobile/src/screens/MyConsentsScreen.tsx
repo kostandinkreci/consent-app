@@ -13,7 +13,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { AppStackParamList, Consent } from '../types/navigation';
-import { listConsents } from '../api/consents';
+import { deleteConsent, listConsents } from '../api/consents';
 import { useAuth } from '../AuthContext';
 import { colors, spacing, typography } from '../theme';
 import Banner from '../components/Banner';
@@ -25,6 +25,7 @@ const MyConsentsScreen = ({ navigation }: Props) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const { user } = useAuth();
 
   const counterpartyLabel = (consent: Consent) => {
@@ -69,12 +70,54 @@ const MyConsentsScreen = ({ navigation }: Props) => {
     }, [fetchConsents])
   );
 
+  const handleDeleteConfirm = async (consentId: string) => {
+    try {
+      setDeletingId(consentId);
+      setError(null);
+      await deleteConsent(consentId);
+      setConsents((prev) => prev.filter((consent) => consent.id !== consentId));
+    } catch (error) {
+      console.error('Failed to delete consent', error);
+      setError('Unable to delete this consent right now. Try again.');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleDelete = (item: Consent) => {
+    const isActive = item.status === 'ACTIVE';
+    const message = isActive
+      ? 'Active consents must be revoked before deletion.'
+      : 'Delete this consent? This cannot be undone.';
+
+    Alert.alert('Delete consent', message, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          if (isActive) return;
+          handleDeleteConfirm(item.id);
+        },
+      },
+    ]);
+  };
+
   const renderItem = ({ item }: { item: Consent }) => (
     <TouchableOpacity
       style={styles.consentItem}
       onPress={() => navigation.navigate('ConsentDetails', { consentId: item.id })}
     >
-      <Text style={styles.consentTitle}>{item.title}</Text>
+      <View style={styles.consentHeader}>
+        <Text style={styles.consentTitle}>{item.title}</Text>
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => handleDelete(item)}
+          disabled={deletingId === item.id}
+        >
+          <Text style={styles.deleteButtonText}>{deletingId === item.id ? 'Deleting...' : 'Delete'}</Text>
+        </TouchableOpacity>
+      </View>
       <Text style={styles.consentPartner}>{counterpartyLabel(item)}</Text>
       <Text style={styles.consentTimestamp}>Created: {formatTimestamp(item.createdAt, 'Unknown')}</Text>
       <Text style={[styles.consentStatus, statusColor(item.status)]}>{item.status}</Text>
@@ -142,6 +185,12 @@ const styles = StyleSheet.create({
   list: {
     gap: spacing.sm,
   },
+  consentHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+  },
   consentItem: {
     borderWidth: 1,
     borderColor: colors.border,
@@ -154,6 +203,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: colors.text,
+    flex: 1,
+  },
+  deleteButton: {
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+  },
+  deleteButtonText: {
+    color: colors.error,
+    fontWeight: '600',
   },
   consentPartner: {
     color: colors.textMuted,

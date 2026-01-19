@@ -38,3 +38,7 @@ export const revokeConsent = async (consentId: string): Promise<Consent> => {
   const response = await apiClient.post<Consent>('/consents/revoke', { consentId });
   return response.data;
 };
+
+export const deleteConsent = async (consentId: string): Promise<void> => {
+  await apiClient.delete(`/consents/${consentId}`);
+};

@@ -27,6 +27,7 @@ const insertConsentStmt = db.prepare(
 
 const getConsentStmt = db.prepare<ConsentRecord>('SELECT * FROM CONSENTS WHERE id = ?');
 const getConsentByJoinCodeStmt = db.prepare<ConsentRecord>('SELECT * FROM CONSENTS WHERE joinCode = ?');
+const deleteConsentStmt = db.prepare('DELETE FROM CONSENTS WHERE id = ?');
 
 export const createConsent = (record: ConsentRecord) => {
   insertConsentStmt.run(record);
@@ -45,6 +46,10 @@ export const updateConsent = (id: string, updates: Partial<ConsentRecord>) => {
   const stmt = db.prepare(`UPDATE CONSENTS SET ${setClause} WHERE id = @id`);
   stmt.run({ id, ...updates });
   return getConsentById(id);
+};
+
+export const deleteConsent = (id: string) => {
+  deleteConsentStmt.run(id);
 };
 
 export const listConsentsForUser = (userId: number) => {

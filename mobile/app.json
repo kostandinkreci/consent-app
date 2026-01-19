@@ -27,7 +27,7 @@
       "predictiveBackGestureEnabled": false
     },
     "extra": {
-      "apiBaseUrl": "http://192.168.0.100:4000"
+      "apiBaseUrl": "http://10.0.241.222:4000"
     },
     "web": {
       "favicon": "./assets/favicon.png"
